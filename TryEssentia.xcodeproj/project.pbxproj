@@ -11,6 +11,12 @@
 		EB8C35362A5A2FA600954FD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB8C35352A5A2FA600954FD9 /* Assets.xcassets */; };
 		EB8C35392A5A2FA600954FD9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB8C35372A5A2FA600954FD9 /* MainMenu.xib */; };
 		EB8C353B2A5A2FA600954FD9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8C353A2A5A2FA600954FD9 /* main.m */; };
+		EB8C35442A5A2FE800954FD9 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB8C35432A5A2FE800954FD9 /* AppController.mm */; };
+		EB8C35472A5C316100954FD9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB8C35462A5C316000954FD9 /* AudioToolbox.framework */; };
+		EB8C35492A5C31C100954FD9 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB8C35482A5C31C000954FD9 /* CoreMedia.framework */; };
+		EB8C354B2A5C31EA00954FD9 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB8C354A2A5C31E900954FD9 /* VideoToolbox.framework */; };
+		EB8C354D2A5CD4FD00954FD9 /* libfftw3f.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB8C354C2A5CD4EC00954FD9 /* libfftw3f.a */; };
+		EB8C354F2A5CD5BE00954FD9 /* libessentia.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB8C354E2A5CD5B400954FD9 /* libessentia.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +27,13 @@
 		EB8C35382A5A2FA600954FD9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		EB8C353A2A5A2FA600954FD9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		EB8C353C2A5A2FA600954FD9 /* TryEssentia.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TryEssentia.entitlements; sourceTree = "<group>"; };
+		EB8C35422A5A2FE800954FD9 /* AppController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
+		EB8C35432A5A2FE800954FD9 /* AppController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
+		EB8C35462A5C316000954FD9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		EB8C35482A5C31C000954FD9 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		EB8C354A2A5C31E900954FD9 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		EB8C354C2A5CD4EC00954FD9 /* libfftw3f.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfftw3f.a; path = ../../../../opt/homebrew/lib/libfftw3f.a; sourceTree = "<group>"; };
+		EB8C354E2A5CD5B400954FD9 /* libessentia.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libessentia.a; path = ../../../../usr/local/lib/libessentia.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,6 +41,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB8C35492A5C31C100954FD9 /* CoreMedia.framework in Frameworks */,
+				EB8C354D2A5CD4FD00954FD9 /* libfftw3f.a in Frameworks */,
+				EB8C35472A5C316100954FD9 /* AudioToolbox.framework in Frameworks */,
+				EB8C354F2A5CD5BE00954FD9 /* libessentia.a in Frameworks */,
+				EB8C354B2A5C31EA00954FD9 /* VideoToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,6 +57,7 @@
 			children = (
 				EB8C35312A5A2FA500954FD9 /* TryEssentia */,
 				EB8C35302A5A2FA500954FD9 /* Products */,
+				EB8C35452A5C316000954FD9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,8 +78,22 @@
 				EB8C35372A5A2FA600954FD9 /* MainMenu.xib */,
 				EB8C353A2A5A2FA600954FD9 /* main.m */,
 				EB8C353C2A5A2FA600954FD9 /* TryEssentia.entitlements */,
+				EB8C35422A5A2FE800954FD9 /* AppController.h */,
+				EB8C35432A5A2FE800954FD9 /* AppController.mm */,
 			);
 			path = TryEssentia;
+			sourceTree = "<group>";
+		};
+		EB8C35452A5C316000954FD9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EB8C354E2A5CD5B400954FD9 /* libessentia.a */,
+				EB8C354C2A5CD4EC00954FD9 /* libfftw3f.a */,
+				EB8C354A2A5C31E900954FD9 /* VideoToolbox.framework */,
+				EB8C35482A5C31C000954FD9 /* CoreMedia.framework */,
+				EB8C35462A5C316000954FD9 /* AudioToolbox.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -133,6 +166,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB8C353B2A5A2FA600954FD9 /* main.m in Sources */,
+				EB8C35442A5A2FE800954FD9 /* AppController.mm in Sources */,
 				EB8C35342A5A2FA500954FD9 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -272,6 +306,10 @@
 				DEVELOPMENT_TEAM = A386R5WFZ6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/homebrew/opt/eigen/include/eigen3,
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainNibFile = MainMenu;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -279,7 +317,27 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/homebrew/Cellar/taglib/1.13.1/lib,
+					/opt/homebrew/lib,
+					/opt/homebrew/Cellar/bzip2/1.0.8/lib/,
+				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-lyaml",
+					"-lswresample",
+					"-ltag",
+					"-lsamplerate",
+					"-lavutil",
+					"-lavformat",
+					"-lavcodec",
+					"-lfftw3f",
+					"-lz",
+					"-lbz2",
+					"-lchromaprint",
+					"-liconv",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyab.TryEssentia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -298,6 +356,10 @@
 				DEVELOPMENT_TEAM = A386R5WFZ6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/homebrew/opt/eigen/include/eigen3,
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainNibFile = MainMenu;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -305,7 +367,27 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/homebrew/Cellar/taglib/1.13.1/lib,
+					/opt/homebrew/lib,
+					/opt/homebrew/Cellar/bzip2/1.0.8/lib/,
+				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-lyaml",
+					"-lswresample",
+					"-ltag",
+					"-lsamplerate",
+					"-lavutil",
+					"-lavformat",
+					"-lavcodec",
+					"-lfftw3f",
+					"-lz",
+					"-lbz2",
+					"-lchromaprint",
+					"-liconv",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyab.TryEssentia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
