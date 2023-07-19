@@ -12,11 +12,13 @@
 #import <AudioToolbox/AudioFile.h>
 
 #include <essentia/algorithmfactory.h>
+#include <essentia/streaming/algorithms/poolstorage.h>
+#include <essentia/scheduler/network.h>
 #include <essentia/pool.h>
 
 using namespace std;
 using namespace essentia;
-using namespace standard;
+//using namespace standard;
 
 @implementation AppController
 -(void)awakeFromNib{
@@ -28,13 +30,13 @@ using namespace standard;
     NSLog(@"essentia initialized");
     
     Real sampleRate = 44100.0;
-    AlgorithmFactory &factory = AlgorithmFactory::instance();
+    standard::AlgorithmFactory &factory = standard::AlgorithmFactory::instance();
     
-    Algorithm *audioLoader = factory.create("MonoLoader",
+    standard::Algorithm *audioLoader = factory.create("MonoLoader",
                                             "filename", "/Users/koji/Desktop/moldover.wav",
                                             "sampleRate", sampleRate);
     
-    Algorithm *beatTracker = factory.create("BeatTrackerMultiFeature");
+    standard::Algorithm *beatTracker = factory.create("BeatTrackerMultiFeature");
     
     vector<Real> audio;
     vector<Real> beats;
@@ -59,7 +61,7 @@ using namespace standard;
         NSLog(@"beat = %f[sec] delta = %f[sec]" ,beats[i], delta);
     }
     
-    Algorithm *beatsMarker = factory.create("AudioOnsetsMarker",
+    standard::Algorithm *beatsMarker = factory.create("AudioOnsetsMarker",
                                             "onsets", beats,
                                             "type", "beep");
     
@@ -91,6 +93,47 @@ using namespace standard;
     
     NSLog(@"done");
 }
+
+- (IBAction)btnClickedStreaming:(id)sender {
+    NSLog(@"btnClickedStreaming");
+    essentia::init();
+    NSLog(@"essentia initialized : streaming");
+    
+    Pool pool;
+    
+    streaming::AlgorithmFactory &factory = streaming::AlgorithmFactory::instance();
+    streaming::Algorithm *monoloader = factory.create("MonoLoader",
+                                                      "filename", "/Users/koji/Desktop/moldover.wav");
+    streaming::Algorithm *beattracker = factory.create("BeatTrackerMultiFeature");
+    
+    
+    monoloader->configure("sampleRate", 44100.0);
+    
+    monoloader->output("audio") >> beattracker->input("signal");
+    beattracker->output("ticks") >> PC(pool, "rhythm.ticks");
+    beattracker->output("confidence") >> essentia::streaming::NOWHERE;
+    
+    scheduler::Network network(monoloader);
+    network.run();
+    
+    std::vector<Real> ticks;
+    if (pool.contains<vector<Real> > ("rhythm.ticks")){
+        ticks = pool.value<vector<Real> > ("rhythm.ticks");
+    }
+    NSLog(@"ticks size = %lu", ticks.size());
+    for (int i=0; i<ticks.size(); i++) {
+        Real delta = 0.0;
+        if (i > 0) {
+            delta = ticks[i] - ticks[i-1];
+        }
+        NSLog(@"tick = %f[sec] delta = %f[sec]" ,ticks[i], delta);
+    }
+    
+    {
+        //use standard algo to mark onsets
+    }
+}
+
 
 
 void writeAudioDataToWAVFile(std::vector<float>& audioData, const char* filePath, int sampleRate, int numChannels) {

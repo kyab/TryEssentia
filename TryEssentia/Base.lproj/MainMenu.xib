@@ -701,6 +701,17 @@
                             <action selector="btnClicked:" target="XEv-yc-IH5" id="JKu-fH-iuB"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dt4-5q-cVn">
+                        <rect key="frame" x="104" y="130" width="203" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Streaming" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dlC-Gr-zf4">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="btnClickedStreaming:" target="XEv-yc-IH5" id="D9m-mU-gOD"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <point key="canvasLocation" x="200" y="400"/>
