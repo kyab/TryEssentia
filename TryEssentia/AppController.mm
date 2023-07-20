@@ -13,6 +13,7 @@
 
 #include <essentia/algorithmfactory.h>
 #include <essentia/streaming/algorithms/poolstorage.h>
+#include <essentia/streaming/algorithms/vectorinput.h>
 #include <essentia/scheduler/network.h>
 #include <essentia/pool.h>
 
@@ -65,37 +66,25 @@ using namespace essentia;
                                             "onsets", beats,
                                             "type", "beep");
     
-//    Algorithm *audioWriter = factory.create("MonoWriter",
-//                                            "filename", "/Users/koji/Desktop/hibana_beat_es.aiff",
-//                                            "format","aiff",
-//                                            "sampleRate", sampleRate);
-    
     vector<Real> audioOutput;
     beatsMarker->input("signal").set(audio);
     beatsMarker->output("signal").set(audioOutput);
-    
-//    audioWriter->input("audio").set(audioOutput);
-    
+        
     beatsMarker->compute();
-//    audioWriter->compute();
     
     writeAudioDataToWAVFile(audioOutput, "/Users/koji/Desktop/moldover_beat.wav", sampleRate, 1);
     
     delete audioLoader;
     delete beatTracker;
     delete beatsMarker;
-//    delete audioWriter;
     
     essentia::shutdown();
-    
-    //show me code to write vector<Real> to some wav file
-    
     
     NSLog(@"done");
 }
 
-- (IBAction)btnClickedStreaming:(id)sender {
-    NSLog(@"btnClickedStreaming");
+- (IBAction)btnClickedStreaming_atOnce:(id)sender {
+    NSLog(@"btnClickedStreamingAtOnce");
     essentia::init();
     NSLog(@"essentia initialized : streaming");
     
@@ -129,9 +118,57 @@ using namespace essentia;
         NSLog(@"tick = %f[sec] delta = %f[sec]" ,ticks[i], delta);
     }
     
+}
+
+- (IBAction)btnClickedStreaming:(id)sender {
+    NSLog(@"btnClickedStreaming");
+    essentia::init();
+    NSLog(@"essentia initialized : streaming");
+    
+    Real sampleRate = 44100.0;
+    vector<Real> audio_all;
     {
-        //use standard algo to mark onsets
+        standard::AlgorithmFactory &stdFactory = standard::AlgorithmFactory::instance();
+        standard::Algorithm *audioLoader = stdFactory.create("MonoLoader",
+                                                             "filename", "/Users/koji/Desktop/moldover.wav",
+                                                             "sampleRate", sampleRate);
+        audioLoader->output("audio").set(audio_all);
+        audioLoader->compute();
+        
+        delete audioLoader;
     }
+    NSLog(@"audio_all size = %lu, %f sec", audio_all.size(), audio_all.size() / sampleRate);
+    
+    Pool pool;
+
+    streaming::AlgorithmFactory &factory = streaming::AlgorithmFactory::instance();
+    streaming::VectorInput<Real> *vecInput = new streaming::VectorInput<Real>();
+    streaming::Algorithm *beattracker = factory.create("BeatTrackerMultiFeature");
+
+    // TODO change this to loop for each 5sec
+    vecInput->setVector(&audio_all);
+    *vecInput >> beattracker->input("signal");
+    beattracker->output("ticks") >> PC(pool, "rhythm.ticks");
+    beattracker->output("confidence") >> essentia::streaming::NOWHERE;
+
+    scheduler::Network network(vecInput);
+    network.run();
+
+    std::vector<Real> ticks;
+    if (pool.contains<vector<Real> > ("rhythm.ticks")){
+        ticks = pool.value<vector<Real> > ("rhythm.ticks");
+    }
+    NSLog(@"ticks size = %lu", ticks.size());
+    for (int i=0; i<ticks.size(); i++) {
+        Real delta = 0.0;
+        if (i > 0) {
+            delta = ticks[i] - ticks[i-1];
+        }
+        NSLog(@"tick = %f[sec] delta = %f[sec]" ,ticks[i], delta);
+    }
+    
+    delete vecInput;
+    delete beattracker;
 }
 
 
