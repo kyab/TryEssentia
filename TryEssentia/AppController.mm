@@ -145,30 +145,65 @@ using namespace essentia;
     streaming::VectorInput<Real> *vecInput = new streaming::VectorInput<Real>();
     streaming::Algorithm *beattracker = factory.create("BeatTrackerMultiFeature");
 
+    vector<Real> audioFragment;
+    
     // TODO change this to loop for each 5sec
-    vecInput->setVector(&audio_all);
+    vecInput->setVector(&audioFragment);
     *vecInput >> beattracker->input("signal");
     beattracker->output("ticks") >> PC(pool, "rhythm.ticks");
+//    beattracker->output("ticks") >> essentia::streaming::NOWHERE;
     beattracker->output("confidence") >> essentia::streaming::NOWHERE;
 
     scheduler::Network network(vecInput);
-    network.run();
+    network.runPrepare();
+    
+    std::vector<Real> finalTicks;
+    
+    size_t consumedSamples = 0;
+    while(true){
+        size_t fragmentSize = 5 * sampleRate;
+        if (fragmentSize > (audio_all.size() - consumedSamples)){
+            fragmentSize = audio_all.size() - consumedSamples;
+        }
+        audioFragment.assign(audio_all.begin() + consumedSamples, audio_all.begin() + consumedSamples + fragmentSize);
+        NSLog(@"network run. consumedSamples = %lu", consumedSamples);
+        while(network.runStep()){
+            ;
+        }
+        NSLog(@"rrrr");
+        
+        if (pool.contains<vector<Real> > ("rhythm.ticks")){
+            std::vector<Real> ticks = pool.value<vector<Real> > ("rhythm.ticks");
+            for (size_t i = 0 ; i < ticks.size(); i++){
+                finalTicks.push_back(ticks[i] + consumedSamples / sampleRate);
+            }
+        }
 
-    std::vector<Real> ticks;
-    if (pool.contains<vector<Real> > ("rhythm.ticks")){
-        ticks = pool.value<vector<Real> > ("rhythm.ticks");
+        consumedSamples += fragmentSize;
+        if(consumedSamples >= audio_all.size()){
+            break;
+        }
+        vecInput->reset();
+        beattracker->reset();
+        pool.remove("rythm.ticks");
+        
     }
-    NSLog(@"ticks size = %lu", ticks.size());
-    for (int i=0; i<ticks.size(); i++) {
+
+//    if (pool.contains<vector<Real> > ("rhythm.ticks")){
+//        finalTicks = pool.value<vector<Real> > ("rhythm.ticks");
+//    }
+    
+    NSLog(@"finalTicks size = %lu", finalTicks.size());
+    for (int i=0; i<finalTicks.size(); i++) {
         Real delta = 0.0;
         if (i > 0) {
-            delta = ticks[i] - ticks[i-1];
+            delta = finalTicks[i] - finalTicks[i-1];
         }
-        NSLog(@"tick = %f[sec] delta = %f[sec]" ,ticks[i], delta);
+        NSLog(@"tick = %f[sec] delta = %f[sec]" ,finalTicks[i], delta);
     }
     
-    delete vecInput;
-    delete beattracker;
+//    delete vecInput;
+//    delete beattracker;
 }
 
 
