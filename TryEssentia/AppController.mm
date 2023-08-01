@@ -147,11 +147,9 @@ using namespace essentia;
 
     vector<Real> audioFragment;
     
-    // TODO change this to loop for each 5sec
     vecInput->setVector(&audioFragment);
     *vecInput >> beattracker->input("signal");
     beattracker->output("ticks") >> PC(pool, "rhythm.ticks");
-//    beattracker->output("ticks") >> essentia::streaming::NOWHERE;
     beattracker->output("confidence") >> essentia::streaming::NOWHERE;
 
     scheduler::Network network(vecInput);
@@ -161,7 +159,7 @@ using namespace essentia;
     
     size_t consumedSamples = 0;
     while(true){
-        size_t fragmentSize = 5 * sampleRate;
+        size_t fragmentSize = 12 * sampleRate;
         if (fragmentSize > (audio_all.size() - consumedSamples)){
             fragmentSize = audio_all.size() - consumedSamples;
         }
@@ -175,24 +173,29 @@ using namespace essentia;
         if (pool.contains<vector<Real> > ("rhythm.ticks")){
             std::vector<Real> ticks = pool.value<vector<Real> > ("rhythm.ticks");
             for (size_t i = 0 ; i < ticks.size(); i++){
-                finalTicks.push_back(ticks[i] + consumedSamples / sampleRate);
+                Real tick = ticks[i];
+                if (consumedSamples == 0){
+                    if (tick <= 10.0){
+                        finalTicks.push_back(tick + consumedSamples / sampleRate);
+                    }
+                }else{
+                    if (tick > 5.0 && tick <= 10.0){
+                        finalTicks.push_back(tick + consumedSamples / sampleRate);
+                    }
+                }
             }
         }
 
-        consumedSamples += fragmentSize;
+        consumedSamples += 5 * sampleRate;
         if(consumedSamples >= audio_all.size()){
             break;
         }
         vecInput->reset();
         beattracker->reset();
-        pool.remove("rythm.ticks");
+        pool.remove("rhythm.ticks");
         
     }
 
-//    if (pool.contains<vector<Real> > ("rhythm.ticks")){
-//        finalTicks = pool.value<vector<Real> > ("rhythm.ticks");
-//    }
-    
     NSLog(@"finalTicks size = %lu", finalTicks.size());
     for (int i=0; i<finalTicks.size(); i++) {
         Real delta = 0.0;
@@ -201,6 +204,19 @@ using namespace essentia;
         }
         NSLog(@"tick = %f[sec] delta = %f[sec]" ,finalTicks[i], delta);
     }
+    
+    standard::AlgorithmFactory &stdFactory = standard::AlgorithmFactory::instance();
+    standard::Algorithm *beatsMarker = stdFactory.create("AudioOnsetsMarker",
+                                            "onsets", finalTicks,
+                                            "type", "beep");
+    vector<Real> audioOutput;
+    beatsMarker->input("signal").set(audio_all);
+    beatsMarker->output("signal").set(audioOutput);
+        
+    beatsMarker->compute();
+    
+    writeAudioDataToWAVFile(audioOutput, "/Users/koji/Desktop/moldover_beat_streaming.wav", sampleRate, 1);
+    
     
 //    delete vecInput;
 //    delete beattracker;
